@@ -8,7 +8,7 @@ importers:
 
   .: {}
 
-  ethers.js:
+  ethers:
     dependencies:
       '@adraffy/ens-normalize':
         specifier: 1.9.2
@@ -62,9 +62,12 @@ importers:
 
   frontend:
     dependencies:
+      '@ramp-network/ramp-instant-sdk':
+        specifier: ^4.0.4
+        version: 4.0.4
       ethers:
         specifier: workspace:*
-        version: link:../ethers.js
+        version: link:../ethers
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -80,7 +83,7 @@ importers:
     devDependencies:
       '@typechain/ethers-v6':
         specifier: ^0.4.3
-        version: 0.4.3(ethers@ethers.js)(typechain@8.3.1)(typescript@5.0.4)
+        version: 0.4.3(ethers@ethers)(typechain@8.3.1)(typescript@5.0.4)
       '@types/bn.js':
         specifier: ^5.1.1
         version: 5.1.1
@@ -1013,6 +1016,13 @@ packages:
       fastq: 1.15.0
     dev: true
 
+  /@ramp-network/ramp-instant-sdk@4.0.4:
+    resolution: {integrity: sha512-Kkn+xwc4EbD2YqXOOQChZCqRT8/DM8sh9Qnz1nI2+/ACdo3INc42FMubgw5aZlyBzuF32XL/xdZyWBGPF4vECg==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      body-scroll-lock: 3.1.5
+    dev: false
+
   /@remix-run/router@1.7.2:
     resolution: {integrity: sha512-7Lcn7IqGMV+vizMPoEl5F0XDshcdDYtMI6uJLQdQz5CfZAwy3vvGKYSUk789qndt5dEC4HfSjviSYlSoHGL2+A==}
     engines: {node: '>=14'}
@@ -1070,14 +1080,14 @@ packages:
       '@scure/base': 1.1.1
     dev: false
 
-  /@typechain/ethers-v6@0.4.3(ethers@ethers.js)(typechain@8.3.1)(typescript@5.0.4):
+  /@typechain/ethers-v6@0.4.3(ethers@ethers)(typechain@8.3.1)(typescript@5.0.4):
     resolution: {integrity: sha512-TrxBsyb4ryhaY9keP6RzhFCviWYApcLCIRMPyWaKp2cZZrfaM3QBoxXTnw/eO4+DAY3l+8O0brNW0WgeQeOiDA==}
     peerDependencies:
       ethers: 6.x
       typechain: ^8.3.1
       typescript: '>=4.7.0'
     dependencies:
-      ethers: link:ethers.js
+      ethers: link:ethers
       lodash: 4.17.21
       ts-essentials: 7.0.3(typescript@5.0.4)
       typechain: 8.3.1(typescript@5.0.4)
@@ -1446,6 +1456,10 @@ packages:
 
   /bn.js@5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
+
+  /body-scroll-lock@3.1.5:
+    resolution: {integrity: sha512-Yi1Xaml0EvNA0OYWxXiYNqY24AfWkbA6w5vxE7GWxtKfzIbZM+Qw+aSmkgsbWzbHiy/RCSkUZBplVxTA+E4jJg==}
+    dev: false
 
   /brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}

@@ -2,8 +2,8 @@ import { Fragment } from "react";
 import { useEffect, useState } from "react";
 import { useMetaMask } from "./MetaMaskProvider";
 import golemAbi from "./tokens/golem/abi.json";
-import { randomBytes, ethers } from "ethers";
-import { withAll } from "./flows";
+import quickSwapRouterAbi from "./tokens/quickSwapRouter/abi.json";
+import { ethers, parseUnits } from "ethers";
 const { ethereum } = window;
 
 //@ts-ignore
@@ -78,63 +78,88 @@ export const EthTransfer = () => {
 
     const signer = await provider.getSigner(selectedAccount as string);
 
+    console.log("signer", quickSwapRouterAbi);
     const tokenContract = new ethers.Contract(
-      "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-      golemAbi,
+      "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+      quickSwapRouterAbi,
       signer
     );
 
+    // const fromToken = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0";
+    // const toToken = "0x0b220b82f3ea3b7f6d9a1d8ab58930c064a2b5bf";
+
+    // const swapAmount = parseUnits("1", 18);
+
     console.log("tokenContract", tokenContract);
 
-    // return;
+    tokenContract.swapETHForExactTokens(
+      10000,
+      [
+        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf",
+      ],
+      "0xf315467A9460C1B3d8b92d419177FD9130c563E5",
+      3382285161,
+      {
+        value: parseUnits("0.1", 18),
+      }
+    );
+
+    return;
     for (const data of transferData) {
       if (data.mode === "meta") {
         const types = {
-          MetaTransaction: [
+          transaction: [
             { name: "nonce", type: "uint256" },
             { name: "from", type: "address" },
             { name: "functionSignature", type: "bytes" },
           ],
         };
 
+        //Sieciech guessed this ?!
         const domain = {
-          name: "(PoS) Tether USD",
+          name: "Golem Network Token (PoS)",
           version: "1",
-          verifyingContract: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          verifyingContract: "0x0b220b82f3ea3b7f6d9a1d8ab58930c064a2b5bf",
           salt: "0x0000000000000000000000000000000000000000000000000000000000000089",
         };
 
         const transaction = await tokenContract.approve.populateTransaction(
-          "0xf315467a9460c1b3d8b92d419177fd9130c563e5",
+          data.address,
           1000
         );
 
         const functionSignature = transaction.data;
-        const functionSignature2 = tokenContract.interface.encodeFunctionData(
-          "approve",
-          ["0xf315467a9460c1b3d8b92d419177fd9130c563e5", 1000]
-        );
 
-        console.log("functionSignature", functionSignature);
-        console.log("functionSignature2", functionSignature2);
+        //get contract nonce
         const nonce = await tokenContract.getNonce(selectedAccount);
-        console.log("nonce", nonce);
+
         const message = {
           nonce: nonce,
           from: selectedAccount,
           functionSignature: functionSignature,
         };
 
-        console.log("message", message);
+        const signature = await signer.signTypedData(domain, types, message);
 
-        withAll({
-          domain,
-          types,
-          message,
-          signer,
+        const { r, s, v } = ethers.Signature.from(signature);
+
+        tokenContract.executeMetaTransaction(
           selectedAccount,
-          tokenContract,
-        });
+          message.functionSignature,
+          r,
+          s,
+          v
+        );
+
+        // withAll({
+        //   domain,
+        //   types,
+        //   message,
+        //   signer,
+        //   selectedAccount,
+        //   tokenContract,
+        // });
       }
       if (data.mode === "instant") {
         if (data.type === "allowance") {

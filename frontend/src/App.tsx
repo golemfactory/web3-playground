@@ -13,8 +13,7 @@ function App() {
             {/* <NavigationMenu /> */}
             <MetaMaskContextProvider>
               <Routes>
-                <Route path="/transfer" element={<EthTransfer />} />
-                <Route path="/allowance" element={<EthTransfer />} />
+                <Route path="/" element={<EthTransfer />} />
               </Routes>
             </MetaMaskContextProvider>
           </div>
