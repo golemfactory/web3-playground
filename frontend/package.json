@@ -8,10 +8,11 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "generate-types": "typechain --target=ethers-v6 'src/tokens/golem/abi.json'"
+    "generate-types": "typechain --target=ethers-v6 'src/contracts/**/abi.json' "
   },
   "dependencies": {
     "@ramp-network/ramp-instant-sdk": "^4.0.4",
+    "dayjs": "^1.11.9",
     "ethers": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

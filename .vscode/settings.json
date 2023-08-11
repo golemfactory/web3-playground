@@ -4,6 +4,8 @@
     "DUPA",
     "hexlify",
     "keccak",
+    "Numberish",
+    "typechain",
     "TYPEHASH"
   ]
 }

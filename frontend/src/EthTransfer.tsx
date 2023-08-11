@@ -1,13 +1,10 @@
 import { Fragment } from "react";
 import { useEffect, useState } from "react";
 import { useMetaMask } from "./MetaMaskProvider";
-import golemAbi from "./tokens/golem/abi.json";
-import quickSwapRouterAbi from "./tokens/quickSwapRouter/abi.json";
-import { ethers, parseUnits } from "ethers";
+import { ethers } from "ethers";
+import golemAbi from "./contracts/golem/abi.json";
 const { ethereum } = window;
 
-//@ts-ignore
-window.ethers = ethers;
 export const EthTransfer = () => {
   const [transferData, setTransferData] = useState([
     {
@@ -78,34 +75,12 @@ export const EthTransfer = () => {
 
     const signer = await provider.getSigner(selectedAccount as string);
 
-    console.log("signer", quickSwapRouterAbi);
     const tokenContract = new ethers.Contract(
       "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
-      quickSwapRouterAbi,
+      golemAbi,
       signer
     );
 
-    // const fromToken = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0";
-    // const toToken = "0x0b220b82f3ea3b7f6d9a1d8ab58930c064a2b5bf";
-
-    // const swapAmount = parseUnits("1", 18);
-
-    console.log("tokenContract", tokenContract);
-
-    tokenContract.swapETHForExactTokens(
-      10000,
-      [
-        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-        "0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf",
-      ],
-      "0xf315467A9460C1B3d8b92d419177FD9130c563E5",
-      3382285161,
-      {
-        value: parseUnits("0.1", 18),
-      }
-    );
-
-    return;
     for (const data of transferData) {
       if (data.mode === "meta") {
         const types = {
@@ -151,15 +126,6 @@ export const EthTransfer = () => {
           s,
           v
         );
-
-        // withAll({
-        //   domain,
-        //   types,
-        //   message,
-        //   signer,
-        //   selectedAccount,
-        //   tokenContract,
-        // });
       }
       if (data.mode === "instant") {
         if (data.type === "allowance") {
