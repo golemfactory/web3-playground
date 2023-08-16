@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useMetaMask } from "./MetaMaskProvider";
 import { ethers } from "ethers";
 import golemAbi from "./contracts/golem/abi.json";
+import axios from "axios";
+
 const { ethereum } = window;
 
 export const EthTransfer = () => {
@@ -75,8 +77,9 @@ export const EthTransfer = () => {
 
     const signer = await provider.getSigner(selectedAccount as string);
 
+    //0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff - swap
     const tokenContract = new ethers.Contract(
-      "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+      "0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf",
       golemAbi,
       signer
     );
@@ -84,18 +87,17 @@ export const EthTransfer = () => {
     for (const data of transferData) {
       if (data.mode === "meta") {
         const types = {
-          transaction: [
+          MetaTransaction: [
             { name: "nonce", type: "uint256" },
             { name: "from", type: "address" },
             { name: "functionSignature", type: "bytes" },
           ],
         };
 
-        //Sieciech guessed this ?!
         const domain = {
           name: "Golem Network Token (PoS)",
           version: "1",
-          verifyingContract: "0x0b220b82f3ea3b7f6d9a1d8ab58930c064a2b5bf",
+          verifyingContract: "0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf",
           salt: "0x0000000000000000000000000000000000000000000000000000000000000089",
         };
 
@@ -105,27 +107,34 @@ export const EthTransfer = () => {
         );
 
         const functionSignature = transaction.data;
+        const functionSignature2 = tokenContract.interface.encodeFunctionData(
+          "approve",
+          [data.address, 1000]
+        );
 
-        //get contract nonce
+        console.log("functionSignature", functionSignature);
+        console.log("functionSignature2", functionSignature2);
         const nonce = await tokenContract.getNonce(selectedAccount);
-
+        console.log("nonce", nonce);
         const message = {
           nonce: nonce,
           from: selectedAccount,
           functionSignature: functionSignature,
         };
 
+        console.log("message", message);
+
         const signature = await signer.signTypedData(domain, types, message);
 
         const { r, s, v } = ethers.Signature.from(signature);
 
-        tokenContract.executeMetaTransaction(
-          selectedAccount,
-          message.functionSignature,
+        axios.post("http://localhost:8000/api/forward/approve", {
+          sender: selectedAccount,
+          abiFunctionCall: functionSignature,
           r,
           s,
-          v
-        );
+          v,
+        });
       }
       if (data.mode === "instant") {
         if (data.type === "allowance") {

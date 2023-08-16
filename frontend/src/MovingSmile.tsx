@@ -4,9 +4,19 @@ import SmileIcon from "./SmileIcon"; // Import the smile icon component
 const MovingSmile = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const [image, setImage] = useState("bomba");
+  const doAnimation = (im: string) => {
+    setVisible(false);
 
+    setTimeout(() => {
+      setImage(im);
+      setVisible(true);
+    }, 1000);
+  };
   useEffect(() => {
     let { x, y } = position;
+    let im = "bomba";
     let xDirection = 1;
     let yDirection = 1;
     let rot = rotation;
@@ -24,9 +34,11 @@ const MovingSmile = () => {
       y = Math.min(Math.max(y + random * yDirection, minY), maxY);
 
       if (currentx === x) {
+        doAnimation("bomba");
         xDirection = -xDirection;
       }
       if (currenty === y) {
+        doAnimation("bomba");
         yDirection = -yDirection;
       }
       setPosition({
@@ -35,11 +47,13 @@ const MovingSmile = () => {
       });
     };
 
+    // 1 second, matching the animation delay
+
     const intervalId = setInterval(() => {
       moveIcon();
       rot = rot + 1;
       setRotation(rot);
-    }, 10); // Adjust the interval time as needed
+    }, 2); // Adjust the interval time as needed
 
     return () => {
       clearInterval(intervalId);
@@ -56,7 +70,7 @@ const MovingSmile = () => {
         zIndex: 1000, // Ensure the icon is on top of other content
       }}
     >
-      <SmileIcon />
+      <SmileIcon isVisible={visible} image={image} />
     </div>
   );
 };

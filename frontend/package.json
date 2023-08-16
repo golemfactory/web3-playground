@@ -11,7 +11,9 @@
     "generate-types": "typechain --target=ethers-v6 'src/contracts/**/abi.json' "
   },
   "dependencies": {
+    "@metamask/onboarding": "^1.0.1",
     "@ramp-network/ramp-instant-sdk": "^4.0.4",
+    "axios": "^1.4.0",
     "dayjs": "^1.11.9",
     "ethers": "workspace:*",
     "react": "^18.2.0",
